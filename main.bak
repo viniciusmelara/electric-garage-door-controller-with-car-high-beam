@@ -1,0 +1,83 @@
+#include <16f628a.h>
+#use delay(clock = 4000000)
+#fuses INTRC_IO, NOMCLR, WDT
+
+volatile int8 flash = 0, overflow = 0;
+
+#INT_EXT
+void int_rb0_isr(void)
+{
+  delay_ms(10); // Debounce
+  
+  clear_interrupt(int_ext);
+
+  set_timer1(0);
+  setup_timer_1(T1_INTERNAL | T1_DIV_BY_1); // 4 MHz clock, 16 bit timer
+  overflow = 0;                             // overflow occurs each 65.5 ms (4/fosc * 2^16-1)
+  flash++;
+  
+  enable_interrupts(INT_EXT);
+}
+
+#INT_TIMER1
+void int_t1_isr(void)
+{
+  overflow++;
+
+  clear_interrupt(int_timer1);
+  disable_interrupts(INT_TIMER1);
+  
+  if (input(PIN_B0) && overflow == 15) // If input high for about 1 sec (highbeam on)
+  {                                    // does not trigger any output. Only trigger them
+    setup_timer_1(T1_DISABLED);        // with short flashes
+    overflow = 0;
+    flash = 0;
+  }
+
+  else if (overflow == 30) // 30 * 65.5 ms -> about 2 seconds
+  {
+    setup_timer_1(T1_DISABLED);
+    overflow = 0;
+
+    if (flash == 1)
+      output_high(PIN_A0);
+
+    else if (flash == 2)
+      output_high(PIN_A1);
+
+    else if (flash == 3)
+    {
+      output_high(PIN_A0);
+      output_high(PIN_A1);
+    }
+
+    delay_ms(200);
+
+    output_low(PIN_A0);
+    output_low(PIN_A1);
+
+    flash = 0;
+  }
+
+  enable_interrupts(INT_TIMER1);
+  set_timer1(0);
+}
+
+void main(void)
+{
+  setup_wdt(WDT_2304MS);
+  output_low(PIN_A0);
+  output_low(PIN_A1);
+
+  restart_wdt();
+  enable_interrupts(INT_EXT);
+  ext_int_edge(L_TO_H); // Interrupt on rising edge
+  enable_interrupts(INT_TIMER1);
+  enable_interrupts(GLOBAL);
+
+  while (true)
+  {
+    restart_wdt();
+  }
+}
+
