@@ -12,29 +12,29 @@ Stack used: 2 worst case (out of 8 total available)
 
 Lines Stmts  %   Files
 ----- ----- ---  -----
-   84    44 100  main.c
+   80    44 100  main.c
   222     0   0  C:\Program Files (x86)\PICC\devices\16f628a.h
 ----- -----
-  306    44 Total
+  302    44 Total
 
 Page ROM  %  RAM   Vol Diff  Functions:
 ---- --- --- ---   --- ----  ----------
 0     21  10   1             @delay_ms1
 0     14   7   0   145  2.6  int_rb0_isr
-0     70  35   0   641  4.3  int_t1_isr
+0     70  35   0   650  4.8  int_t1_isr
 0     44  22   0   188  1.8  MAIN
 
 Program metrics:
     Functions               3
     Statements              44
-    Comments                69
-    Volume (V)              1227
-    Difficilty (D)          8.7
-    Effort to implement (E) 10729
-    Time to implement (T)   10 minutes
+    Comments                71
+    Volume (V)              1236
+    Difficilty (D)          9.2
+    Effort to implement (E) 11378
+    Time to implement (T)   11 minutes
     Est Delivered Bugs (B)  0
     Cyclomatic Complexity   5
-    Maintainability (MI)    141
+    Maintainability (MI)    143
 
  Segment     Used  Free
 -----------  ----  ----

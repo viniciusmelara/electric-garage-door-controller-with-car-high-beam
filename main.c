@@ -27,9 +27,9 @@ void int_t1_isr(void)
   clear_interrupt(int_timer1);
   disable_interrupts(INT_TIMER1);
 
-  if (input(PIN_B0) && overflow == 15) // If input high for about 1 sec (high beam on)
-  {                                    // does not trigger any output. Only trigger them
-    setup_timer_1(T1_DISABLED);        // with short flashes
+  if (!input(PIN_B0) && overflow == 15) // If input low for about 1 sec (high beam on)
+  {                                     // does not trigger any output. Only trigger them
+    setup_timer_1(T1_DISABLED);         // with short flashes
     overflow = 0;
     flash = 0;
   }
@@ -68,7 +68,7 @@ void main(void)
   restart_wdt();
 
   enable_interrupts(INT_EXT);
-  ext_int_edge(L_TO_H); // Interrupt on rising edge
+  ext_int_edge(H_TO_L); // Interrupt on rising edge
   enable_interrupts(INT_TIMER1);
   enable_interrupts(GLOBAL);
 
